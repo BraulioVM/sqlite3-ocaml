@@ -284,6 +284,9 @@ module CArray : sig
 
   val of_int64_bigarray :
     (Int64.t, Bigarray.int64_elt, Bigarray.c_layout) Bigarray.Array1.t -> t
+
+  val of_int32_bigarray :
+    (Int32.t, Bigarray.int32_elt, Bigarray.c_layout) Bigarray.Array1.t -> t
 end
 
 (** {2 General database operations} *)

@@ -1052,19 +1052,28 @@ CAMLprim value caml_sqlite3_bind_carray(value v_stmt, intnat pos, value int_arra
   // check the pos 
   sqlite3_stmt *stmt = stmtw->stmt;
   range_check(pos - 1, sqlite3_bind_parameter_count(stmt));
+  free_stmt_carray_at_pos(stmtw, pos);
 
   // get the actual array
-  value int_array = Field(int_array_variant, 0); // TODO: support other types
-
-  // store the carray variable
-  free_stmt_carray_at_pos(stmtw, pos);
+  value int_array = Field(int_array_variant, 0);
   bind_carray(stmtw, pos, int_array);
 
   int array_size = Caml_ba_array_val(int_array)->dim[0];
   int64_t* integers = Caml_ba_data_val(int_array);
+  int array_type = 0;
+  switch (Tag_val(int_array_variant)) {
+  case 0:
+    array_type = CARRAY_INT64;
+    break;
+  case 1:
+    array_type = CARRAY_INT32;
+    break;
+  default:
+    abort();
+  }
 
   CAMLreturn(Val_rc(sqlite3_carray_bind(stmt, pos, integers,
-					array_size, CARRAY_INT64, NULL)));
+					array_size, array_type, NULL)));
 }
 
 CAMLprim value caml_sqlite3_bind_blob_bc(value v_stmt, value v_pos,
