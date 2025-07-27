@@ -1043,9 +1043,7 @@ static void bind_carray(stmt_wrap* stmtw, intnat pos, value array) {
   return;
 }
 
-CAMLprim value caml_sqlite3_bind_carray(value v_stmt, intnat pos, value int_array_variant) {
-  CAMLparam2(v_stmt, int_array_variant);
-
+CAMLprim value caml_sqlite3_bind_carray(value v_stmt, intnat pos, value carray) {
   // get the statement
   stmt_wrap *stmtw = safe_get_stmtw("bind_carray", v_stmt);
 
@@ -1055,13 +1053,13 @@ CAMLprim value caml_sqlite3_bind_carray(value v_stmt, intnat pos, value int_arra
   free_stmt_carray_at_pos(stmtw, pos);
 
   // get the actual array
-  value int_array = Field(int_array_variant, 0);
-  bind_carray(stmtw, pos, int_array);
+  value bigarray = Field(carray, 0);
+  bind_carray(stmtw, pos, bigarray);
 
-  int array_size = Caml_ba_array_val(int_array)->dim[0];
-  int64_t* integers = Caml_ba_data_val(int_array);
+  int size = Caml_ba_array_val(bigarray)->dim[0];
+  void* elements = Caml_ba_data_val(bigarray);
   int array_type = 0;
-  switch (Tag_val(int_array_variant)) {
+  switch (Tag_val(carray)) {
   case 0:
     array_type = CARRAY_INT64;
     break;
@@ -1072,8 +1070,9 @@ CAMLprim value caml_sqlite3_bind_carray(value v_stmt, intnat pos, value int_arra
     abort();
   }
 
-  CAMLreturn(Val_rc(sqlite3_carray_bind(stmt, pos, integers,
-					array_size, array_type, NULL)));
+  return Val_rc(sqlite3_carray_bind(stmt, pos,
+					elements, size,
+					array_type, NULL));
 }
 
 CAMLprim value caml_sqlite3_bind_blob_bc(value v_stmt, value v_pos,
