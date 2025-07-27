@@ -37,7 +37,7 @@ let%test "can_get_int64_values_out_of_carray" =
   assert (0 = List.compare compare_query_row (get_all stmt) expected);
   true
 
-let%test "can_get_int64_values_out_of_carray" =
+let%test "can_get_int32_values_out_of_carray" =
   let db = db_open ":memory:" in
 
   let carray =
@@ -48,6 +48,27 @@ let%test "can_get_int64_values_out_of_carray" =
   assert (Rc.OK = bind_carray stmt 1 carray);
   let expected : Data.t array list =
     [ [| INT 1L |]; [| INT 2L |]; [| INT 10L |]; [| INT 11L |]; [| INT 30L |] ]
+  in
+  assert (0 = List.compare compare_query_row (get_all stmt) expected);
+  true
+
+let%test "can_get_float_values_out_of_carray" =
+  let db = db_open ":memory:" in
+
+  let carray =
+    Bigarray.(Array1.of_array float64 c_layout [| 1.; 2.; 10.; 11.; 30. |])
+    |> CArray.of_float_bigarray
+  in
+  let stmt = prepare db "SELECT value FROM carray($ptr)" in
+  assert (Rc.OK = bind_carray stmt 1 carray);
+  let expected : Data.t array list =
+    [
+      [| FLOAT 1. |];
+      [| FLOAT 2. |];
+      [| FLOAT 10. |];
+      [| FLOAT 11. |];
+      [| FLOAT 30. |];
+    ]
   in
   assert (0 = List.compare compare_query_row (get_all stmt) expected);
   true

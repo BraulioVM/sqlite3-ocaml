@@ -1066,6 +1066,9 @@ CAMLprim value caml_sqlite3_bind_carray(value v_stmt, intnat pos, value carray) 
   case 1:
     array_type = CARRAY_INT32;
     break;
+  case 2:
+    array_type = CARRAY_DOUBLE;
+    break;
   default:
     abort();
   }

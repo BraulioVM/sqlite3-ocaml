@@ -239,10 +239,17 @@ module CArray = struct
   type int32_c_array =
     (Int32.t, Bigarray.int32_elt, Bigarray.c_layout) Bigarray.Array1.t
 
-  type t = Int64 of int64_c_array | Int32 of int32_c_array
+  type float_c_array =
+    (float, Bigarray.float64_elt, Bigarray.c_layout) Bigarray.Array1.t
+
+  type t =
+    | Int64 of int64_c_array
+    | Int32 of int32_c_array
+    | Float of float_c_array
 
   let of_int64_bigarray int64_c_array = Int64 int64_c_array
   let of_int32_bigarray int32_c_array = Int32 int32_c_array
+  let of_float_bigarray float_array = Float float_array
 end
 
 type header = string
