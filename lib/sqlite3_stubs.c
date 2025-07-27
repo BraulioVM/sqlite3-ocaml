@@ -1072,7 +1072,7 @@ CAMLprim value caml_sqlite3_bind_carray(value v_stmt, intnat pos, value carray) 
 
   return Val_rc(sqlite3_carray_bind(stmt, pos,
 					elements, size,
-					array_type, NULL));
+					array_type, SQLITE_STATIC));
 }
 
 CAMLprim value caml_sqlite3_bind_blob_bc(value v_stmt, value v_pos,
