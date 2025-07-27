@@ -1047,7 +1047,7 @@ CAMLprim value caml_sqlite3_bind_carray(value v_stmt, intnat pos, value int_arra
   CAMLparam2(v_stmt, int_array_variant);
 
   // get the statement
-  stmt_wrap *stmtw = safe_get_stmtw("bind_blob", v_stmt);
+  stmt_wrap *stmtw = safe_get_stmtw("bind_carray", v_stmt);
 
   // check the pos 
   sqlite3_stmt *stmt = stmtw->stmt;
